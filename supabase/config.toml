@@ -1,0 +1,7 @@
+# Set to your real project ref (`supabase link`). The ref is not a secret.
+project_id = "gisgllnvmgkyhelhhbcr"
+
+[functions.submit-contact]
+# Public form: no user JWT. Abuse is handled inside the function
+# (validation, honeypot, per-IP rate limit, CORS allow-list).
+verify_jwt = false
