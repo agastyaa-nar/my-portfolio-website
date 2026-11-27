@@ -4,6 +4,7 @@ import { Inner, Sheet, type Tone } from "./Sheet";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Download } from "lucide-react";
+import { Portrait } from "./Portrait";
 import type { Settings } from "@/data/types";
 
 // Where each trait word sits (viewBox 500×520) and the point its arrow aims at.
@@ -48,7 +49,7 @@ export function Hello({ s, tone, prev }: { s: Settings; tone: Tone; prev?: Tone 
         {s.photo_url && (
           <div className="px-8 md:px-0"><div className="relative mx-auto aspect-[500/520] w-full max-w-[560px]">
             <svg aria-hidden viewBox="0 0 500 520" className="absolute inset-0 h-full w-full overflow-visible">
-              {traits.map((_, i) => <Arrow key={i} a={SLOTS[i].at.map((v, k) => v + (k ? 16 : (SLOTS[i].to[0] > SLOTS[i].at[0] ? 30 : -30))) as [number, number]} b={SLOTS[i].to} bend={SLOTS[i].bend} delay={0.4 + i * 0.15} head={8} />)}
+              {traits.map((_, i) => <Arrow key={i} a={SLOTS[i].at.map((v, k) => v + (k ? 16 : (SLOTS[i].to[0] > SLOTS[i].at[0] ? 46 : -46))) as [number, number]} b={SLOTS[i].to} bend={SLOTS[i].bend} delay={0.4 + i * 0.15} head={8} />)}
             </svg>
             {traits.map((t, i) => (
               <motion.span key={t} initial={reduce ? false : { opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.3 + i * 0.15 }}
@@ -59,7 +60,7 @@ export function Hello({ s, tone, prev }: { s: Settings; tone: Tone; prev?: Tone 
             <div className="group absolute left-[27%] top-[17%] h-[66%] w-[46%]">
               <PenMark kind="box" seed={2} padX={7} padY={7} block className="h-full w-full">
                 <PenMark kind="box" seed={9} padX={14} padY={14} block className="h-full w-full">
-                  <img src={s.photo_url} alt={`Portrait of ${s.full_name}`} className="h-full w-full rounded-[4px] bg-muted object-cover grayscale contrast-105 transition duration-700 group-hover:scale-[1.04] group-hover:grayscale-0" />
+                  <div className="h-full w-full overflow-hidden rounded-[4px] bg-muted grayscale contrast-105 transition duration-700 group-hover:grayscale-0 [&_img]:transition-transform [&_img]:duration-700 group-hover:[&_img]:scale-[1.04]"><Portrait src={s.photo_url} crop={s.photo_crop} alt={`Portrait of ${s.full_name}`} /></div>
                 </PenMark>
               </PenMark>
             </div>

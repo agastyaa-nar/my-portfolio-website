@@ -12,10 +12,28 @@ export type Field = {
 
 export const inputCls = "w-full rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring";
 
-async function upload(file: File, folder: string): Promise<string> {
+const MAX_EDGE = 2400;
+
+/** Phone photos are often 10 MB+. Downscale big raster images in the browser first (keeps PNG transparency). */
+async function shrink(file: File): Promise<File | Blob> {
+  if (!/^image\/(jpeg|png|webp)$/.test(file.type)) return file;
+  try {
+    const bmp = await createImageBitmap(file); // applies EXIF rotation
+    const k = Math.min(1, MAX_EDGE / Math.max(bmp.width, bmp.height));
+    if (k === 1 && file.size < 3_000_000) return file;
+    const c = document.createElement("canvas");
+    c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
+    c.getContext("2d")!.drawImage(bmp, 0, 0, c.width, c.height);
+    const type = file.type === "image/png" ? "image/png" : "image/jpeg";
+    return await new Promise<Blob>((res) => c.toBlob((b) => res(b ?? file), type, 0.9));
+  } catch { return file; }
+}
+
+export async function upload(file: File, folder: string): Promise<string> {
+  const body = await shrink(file);
   const safe = file.name.toLowerCase().replace(/[^a-z0-9.]+/g, "-");
   const path = `${folder}/${Date.now()}-${safe}`;
-  const { error } = await supabase.storage.from("portfolio").upload(path, file, { contentType: file.type });
+  const { error } = await supabase.storage.from("portfolio").upload(path, body, { contentType: body.type || file.type });
   if (error) throw error;
   return supabase.storage.from("portfolio").getPublicUrl(path).data.publicUrl;
 }

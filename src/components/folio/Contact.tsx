@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { Github, Instagram, Linkedin, Loader2, Mail, Send } from "lucide-react";
+import { focus } from "./Portrait";
 import { Hand, Heading, PenMark, WriteIn } from "./Pen";
 import { Inner, Sheet, type Tone } from "./Sheet";
 import { Button } from "@/components/ui/button";
@@ -56,7 +57,7 @@ export function Contact({ s, tone, prev }: { s: Settings; tone: Tone; prev?: Ton
           <Heading seed={19} className="text-[clamp(3.6rem,8.6vw,9rem)]">Thank you</Heading>
           {s.photo_url && (
             <div className="mt-10 flex items-center gap-5">
-              <PenMark kind="oval" seed={8} padX={8} padY={8} className="rounded-full"><img src={s.photo_url} alt="" className="h-16 w-16 rounded-full object-cover" /></PenMark>
+              <PenMark kind="oval" seed={8} padX={8} padY={8} className="rounded-full"><img src={s.photo_url} alt="" className="h-16 w-16 rounded-full object-cover" style={{ objectPosition: focus(s.photo_crop) }} /></PenMark>
               <Hand className="text-[clamp(26px,2.8vw,38px)]">get in touch</Hand>
             </div>
           )}

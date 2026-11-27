@@ -1,9 +1,13 @@
+/** Visible part of the photo, as percentages of the whole image. */
+export type PhotoCrop = { x: number; y: number; width: number; height: number };
+
 export type Settings = {
   full_name: string; role_label: string; bio: string;
   photo_url: string | null; cv_url: string | null; email: string | null;
   github_url: string | null; linkedin_url: string | null; instagram_url: string | null;
   cover_title: string | null; greeting: string | null; location: string | null;
   traits: string[]; letter: string | null;
+  photo_crop: PhotoCrop | null;
 };
 export type Experience = {
   id?: string; title: string; organization: string; period: string; description: string;

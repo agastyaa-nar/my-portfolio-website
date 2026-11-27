@@ -5,6 +5,7 @@ import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { FieldInput, type Field } from "./FieldInput";
+import { PhotoField } from "./PhotoField";
 
 const fields: Field[] = [
   { key: "full_name", label: "Full name", type: "text", required: true },
@@ -15,7 +16,6 @@ const fields: Field[] = [
   { key: "location", label: "Location", type: "text", hint: "shown on the cover" },
   { key: "traits", label: "Words around your portrait", type: "tags", hint: "up to 6, comma separated" },
   { key: "letter", label: "Closing note", type: "textarea", hint: "blank line = new paragraph" },
-  { key: "photo_url", label: "Profile photo", type: "file", folder: "profile" },
   { key: "cv_url", label: "CV (PDF)", type: "file", folder: "cv", accept: "application/pdf" },
   { key: "email", label: "Public email", type: "text" },
   { key: "github_url", label: "GitHub URL", type: "text" },
@@ -33,7 +33,7 @@ export const ProfileForm = () => {
 
   const save = async (e: React.FormEvent) => {
     e.preventDefault(); setSaving(true);
-    const body: Record<string, any> = { id: 1 };
+    const body: Record<string, any> = { id: 1, photo_url: v.photo_url || null, photo_crop: v.photo_crop ?? null };
     for (const f of fields) body[f.key] = typeof v[f.key] === "string" && !v[f.key].trim() ? null : v[f.key];
     const { error } = await supabase.from("site_settings").upsert(body);
     setSaving(false);
@@ -44,6 +44,7 @@ export const ProfileForm = () => {
   return (
     <form onSubmit={save} className="space-y-4">
       <h3 className="text-lg font-semibold">Profile & links</h3>
+      <PhotoField url={v.photo_url ?? null} crop={v.photo_crop ?? null} onChange={(url, crop) => setV({ ...v, photo_url: url, photo_crop: crop })} />
       {fields.map((f) => <FieldInput key={f.key} field={f} value={v[f.key]} onChange={(x) => setV({ ...v, [f.key]: x })} />)}
       <button disabled={saving} className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2 text-sm font-medium text-primary-foreground disabled:opacity-60">
         {saving && <Loader2 className="h-4 w-4 animate-spin" />} Save
