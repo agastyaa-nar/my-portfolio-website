@@ -86,13 +86,17 @@ Tables: `projects` (public read-only, edit from the Supabase dashboard) and `con
 (no public access at all; only the Edge Function can write, only you can read).
 
 ### 5. Contact form backend
-The form calls the `submit-contact` Edge Function, which validates input, checks a honeypot,
-rate-limits per IP (hashed), stores the message, then notifies Discord.
+The form calls the `submit-contact` Edge Function: it validates input, checks a hidden honeypot field,
+rate-limits per IP (stored hashed), saves the message, then notifies you. Notifications are optional and
+independent: set the secrets for Discord, email (Resend), both, or neither (read messages in /admin -> Inbox).
 
 ```bash
-supabase secrets set DISCORD_WEBHOOK_URL="https://discord.com/api/webhooks/..." \
-  ALLOWED_ORIGINS="https://narr-portfolio.vercel.app,http://localhost:8080" \
+supabase secrets set ALLOWED_ORIGINS="https://your-site.vercel.app,http://localhost:8080" \
   IP_HASH_SALT="$(openssl rand -hex 16)"
+# optional: Discord
+supabase secrets set DISCORD_WEBHOOK_URL="https://discord.com/api/webhooks/..."
+# optional: email via Resend
+supabase secrets set RESEND_API_KEY="re_..." NOTIFY_EMAIL="you@gmail.com"
 supabase functions deploy submit-contact
 ```
 
@@ -282,3 +286,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 ⭐ **Star this repository if you found it helpful!**
+
+## Credits
+The visual language (paper and night sheets, serif headings, handwritten pen marks) is inspired by the
+"Marginalia Portfolio Template" by Kedhareswer Naidu (MIT, https://kedhar.pages.dev). This project re-creates it
+from scratch with Motion (motion.dev), shadcn/ui, react-hook-form, zod and qrcode.react; no code was copied.
+Fonts: DM Serif Display, Caveat, Poppins (SIL OFL, self-hosted via @fontsource).

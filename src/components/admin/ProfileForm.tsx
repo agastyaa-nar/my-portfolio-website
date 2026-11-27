@@ -9,7 +9,12 @@ import { FieldInput, type Field } from "./FieldInput";
 const fields: Field[] = [
   { key: "full_name", label: "Full name", type: "text", required: true },
   { key: "role_label", label: "Role label", type: "text", required: true, hint: "small text above your name" },
-  { key: "bio", label: "Bio", type: "textarea", required: true },
+  { key: "bio", label: "Bio", type: "textarea", required: true, hint: "*underline* a phrase, [circle] a phrase" },
+  { key: "cover_title", label: "Cover word", type: "text", hint: "giant title on the cover; empty = your first name" },
+  { key: "greeting", label: "Hello heading", type: "text" },
+  { key: "location", label: "Location", type: "text", hint: "shown on the cover" },
+  { key: "traits", label: "Words around your portrait", type: "tags", hint: "up to 6, comma separated" },
+  { key: "letter", label: "Closing note", type: "textarea", hint: "blank line = new paragraph" },
   { key: "photo_url", label: "Profile photo", type: "file", folder: "profile" },
   { key: "cv_url", label: "CV (PDF)", type: "file", folder: "cv", accept: "application/pdf" },
   { key: "email", label: "Public email", type: "text" },

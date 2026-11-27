@@ -1,6 +1,6 @@
 import { useLocation, Link } from "react-router-dom";
 import { useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { Home, ArrowLeft } from "lucide-react";
 
 const NotFound = () => {
@@ -21,7 +21,7 @@ const NotFound = () => {
           initial={{ scale: 0.5 }}
           animate={{ scale: 1 }}
           transition={{ type: "spring", duration: 0.5 }}
-          className="text-9xl font-bold mb-4 neon-text"
+          className="text-9xl font-bold mb-4 font-display font-normal"
         >
           404
         </motion.h1>

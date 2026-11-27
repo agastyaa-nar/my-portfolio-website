@@ -70,33 +70,50 @@ Deno.serve(async (req) => {
     return json({ error: "Could not save your message." }, 500, origin);
   }
 
-  // Notification is best-effort: the message is already safely stored.
+  // Notifications are best-effort: the message is already safely stored.
+  // Any of these can be enabled by setting its secret; none is required.
   const webhook = Deno.env.get("DISCORD_WEBHOOK_URL");
+  const resendKey = Deno.env.get("RESEND_API_KEY");
+  const notifyTo = Deno.env.get("NOTIFY_EMAIL");
+  const oneLine = (v: string) => v.replace(/\s+/g, " ").trim();
+
+  const sends: Promise<boolean>[] = [];
   if (webhook) {
-    try {
-      const res = await fetch(webhook, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: "Portfolio Inbox",
-          allowed_mentions: { parse: [] }, // block @everyone / @role injection
-          embeds: [{
-            title: "New portfolio message",
-            color: 0x4f46e5,
-            fields: [
-              { name: "Name", value: name, inline: true },
-              { name: "Email", value: email, inline: true },
-              { name: "Message", value: message.slice(0, 1024) },
-            ],
-            timestamp: new Date().toISOString(),
-          }],
-        }),
-      });
-      if (res.ok) await supabase.from("contact_messages").update({ notified_at: new Date().toISOString() }).eq("id", row.id);
-      else console.error("discord failed", res.status);
-    } catch (e) {
-      console.error("discord error", e);
-    }
+    sends.push(fetch(webhook, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        username: "Portfolio Inbox",
+        allowed_mentions: { parse: [] }, // block @everyone / @role injection
+        embeds: [{
+          title: "New portfolio message",
+          color: 0x7d84ef,
+          fields: [
+            { name: "Name", value: oneLine(name), inline: true },
+            { name: "Email", value: email, inline: true },
+            { name: "Message", value: message.slice(0, 1024) },
+          ],
+          timestamp: new Date().toISOString(),
+        }],
+      }),
+    }).then((r) => { if (!r.ok) console.error("discord failed", r.status); return r.ok; }));
+  }
+  if (resendKey && notifyTo) {
+    sends.push(fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${resendKey}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        from: "Portfolio <onboarding@resend.dev>",
+        to: [notifyTo],
+        reply_to: email,
+        subject: `New message from ${oneLine(name)}`,
+        text: `${message}\n\n${oneLine(name)} <${email}>`,
+      }),
+    }).then((r) => { if (!r.ok) console.error("resend failed", r.status); return r.ok; }));
+  }
+  const results = await Promise.allSettled(sends);
+  if (results.some((r) => r.status === "fulfilled" && r.value)) {
+    await supabase.from("contact_messages").update({ notified_at: new Date().toISOString() }).eq("id", row.id);
   }
 
   return json({ status: "ok" }, 200, origin);

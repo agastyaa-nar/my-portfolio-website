@@ -2,77 +2,74 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Design system: one calm accent, neutral surfaces, generous whitespace.
-   All colors are HSL triplets consumed via hsl(var(--token)). */
+/* "Paper" is the default surface; any element with .night re-themes every shadcn
+   component inside it (inputs, buttons, dialogs) through the same variables. */
 @layer base {
   :root {
-    --background: 40 20% 98%;
-    --foreground: 224 20% 12%;
-    --card: 0 0% 100%;
-    --card-foreground: 224 20% 12%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 224 20% 12%;
-    --primary: 243 55% 48%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 40 15% 94%;
-    --secondary-foreground: 224 20% 12%;
-    --muted: 40 15% 94%;
-    --muted-foreground: 224 8% 40%;
-    --accent: 243 60% 96%;
-    --accent-foreground: 243 55% 40%;
+    --background: 48 12% 91.6%;
+    --foreground: 240 3% 14%;
+    --card: 48 14% 95%;
+    --card-foreground: 240 3% 14%;
+    --popover: 48 14% 95%;
+    --popover-foreground: 240 3% 14%;
+    --primary: 240 3% 14%;
+    --primary-foreground: 48 12% 91.6%;
+    --secondary: 48 10% 87%;
+    --secondary-foreground: 240 3% 14%;
+    --muted: 48 10% 87%;
+    --muted-foreground: 240 3% 38%;
+    --accent: 236 60% 92%;
+    --accent-foreground: 240 3% 14%;
     --destructive: 0 65% 48%;
     --destructive-foreground: 0 0% 100%;
-    --border: 40 12% 88%;
-    --input: 40 12% 88%;
-    --ring: 243 55% 48%;
+    --border: 48 6% 78%;
+    --input: 48 6% 78%;
+    --ring: 236 78% 71%;
+    --pen: 236 78% 71%;
     --radius: 0.75rem;
   }
 
-  .dark {
-    --background: 228 16% 7%;
-    --foreground: 40 15% 94%;
-    --card: 228 14% 10%;
-    --card-foreground: 40 15% 94%;
-    --popover: 228 14% 10%;
-    --popover-foreground: 40 15% 94%;
-    --primary: 239 84% 74%;
-    --primary-foreground: 228 16% 7%;
-    --secondary: 228 12% 14%;
-    --secondary-foreground: 40 15% 94%;
-    --muted: 228 12% 14%;
-    --muted-foreground: 225 8% 62%;
-    --accent: 239 30% 18%;
-    --accent-foreground: 239 84% 82%;
-    --destructive: 0 62% 55%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 228 10% 18%;
-    --input: 228 10% 18%;
-    --ring: 239 84% 74%;
+  .night {
+    --background: 240 4% 17%;
+    --foreground: 48 12% 91.6%;
+    --card: 240 4% 20%;
+    --card-foreground: 48 12% 91.6%;
+    --popover: 240 4% 20%;
+    --popover-foreground: 48 12% 91.6%;
+    --primary: 48 12% 91.6%;
+    --primary-foreground: 240 4% 17%;
+    --secondary: 240 4% 22%;
+    --secondary-foreground: 48 12% 91.6%;
+    --muted: 240 4% 22%;
+    --muted-foreground: 240 3% 68%;
+    --accent: 240 4% 24%;
+    --accent-foreground: 48 12% 91.6%;
+    --border: 240 4% 30%;
+    --input: 240 4% 30%;
   }
 
   * { @apply border-border; }
-  html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
+  html { scroll-behavior: smooth; }
   body {
-    @apply bg-background text-foreground antialiased;
-    font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    @apply bg-background font-sans font-light text-foreground antialiased;
+    overflow-x: clip;
   }
-  ::selection { background: hsl(var(--primary) / 0.2); }
-  @media (prefers-reduced-motion: reduce) {
-    html { scroll-behavior: auto; }
-    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
-  }
+  ::selection { background: hsl(var(--pen) / 0.3); }
+  :focus-visible { outline: 2px dashed hsl(var(--pen)); outline-offset: 4px; border-radius: 6px; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 }
 
 @layer components {
-  .font-display { font-family: "Instrument Serif", Georgia, serif; font-weight: 400; letter-spacing: -0.01em; }
-  .section-title { @apply font-display text-4xl sm:text-5xl text-foreground; }
-  .eyebrow { @apply text-xs font-medium uppercase tracking-[0.18em] text-primary; }
-  .card-surface { @apply rounded-xl border border-border bg-card transition-colors hover:border-primary/40; }
+  /* Paper grain: tiny dots, multiplied on paper and screened on night. */
+  .grain::before {
+    content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: .5;
+    background-image: radial-gradient(hsl(var(--foreground) / .09) .6px, transparent .7px);
+    background-size: 5px 5px;
+  }
 }
 
 @layer utilities {
+  @keyframes bob { 0%, 100% { transform: translateY(-3px); } 50% { transform: translateY(5px); } }
+  .animate-bob { animation: bob 2.2s ease-in-out infinite; }
   @keyframes scroll-left { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-  .animate-scroll-left { animation: scroll-left 40s linear infinite; will-change: transform; }
-  .no-scrollbar::-webkit-scrollbar { display: none; }
-  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 }

@@ -17,8 +17,13 @@ export default {
       },
     },
     extend: {
-      fontFamily: { display: ["Instrument Serif", "Georgia", "serif"] },
+      fontFamily: {
+        display: ["DM Serif Display", "Georgia", "serif"],
+        hand: ["Caveat", "Bradley Hand", "cursive"],
+        sans: ["Poppins", "system-ui", "sans-serif"],
+      },
       colors: {
+        pen: "hsl(var(--pen))",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

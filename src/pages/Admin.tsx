@@ -25,6 +25,7 @@ const sections = {
         { key: "icon", label: "Fallback icon", type: "select", options: ICONS },
         { key: "logo_url", label: "Logo", type: "file", folder: "logos" },
         { key: "images", label: "Photos", type: "files", folder: "experience" },
+        { key: "highlight", label: "Circle this title with the pen", type: "bool" },
       ] as Field[]} />,
   },
   projects: {
@@ -34,7 +35,10 @@ const sections = {
       fields={[
         { key: "title", label: "Title", type: "text", required: true },
         { key: "slug", label: "Slug", type: "text", required: true, hint: "unique, lowercase-with-dashes" },
-        { key: "description", label: "Description", type: "textarea", required: true },
+        { key: "kind", label: "Kind", type: "text", hint: "e.g. REST API" },
+        { key: "year", label: "Year", type: "text" },
+        { key: "description", label: "Summary", type: "textarea", required: true, hint: "*underline* a phrase, [circle] a phrase" },
+        { key: "challenge", label: "My challenge", type: "textarea", hint: "optional" },
         { key: "tech", label: "Technologies", type: "tags" },
         { key: "demo_url", label: "Live demo URL", type: "text" },
         { key: "github_url", label: "Source URL", type: "text" },
@@ -60,6 +64,7 @@ const sections = {
       fields={[
         { key: "name", label: "Name", type: "text", required: true },
         { key: "logo_url", label: "Logo", type: "file", folder: "tech", required: true, hint: "SVG or PNG" },
+        { key: "note", label: "Handwritten note", type: "text", hint: "shown when a visitor hovers the logo" },
       ] as Field[]} />,
   },
   inbox: { label: "Inbox", el: <Messages /> },
