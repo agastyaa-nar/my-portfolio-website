@@ -5,6 +5,7 @@ import { ArrowDown, ArrowUp, CornerDownRight, ListPlus, Loader2, Pencil, Plus, T
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { FieldInput, inputCls, type Field } from "./FieldInput";
+import { clearDraft, loadDraft, saveDraft } from "@/lib/draft";
 
 type Row = Record<string, any>;
 type Props = {
@@ -16,7 +17,9 @@ type Props = {
 export const CrudSection = ({ table, title, fields, labelKey, subKey, defaults, parentKey }: Props) => {
   const qc = useQueryClient();
   const [rows, setRows] = useState<Row[]>([]);
-  const [edit, setEdit] = useState<Row | null>(null);
+  const draftKey = `edit:${table}`;
+  const [edit, setEdit] = useState<Row | null>(() => loadDraft<Row>(draftKey));
+  const [restored] = useState(() => !!loadDraft(draftKey)); // show the "restored" notice only for drafts found at load time
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -26,6 +29,7 @@ export const CrudSection = ({ table, title, fields, labelKey, subKey, defaults, 
     setRows(data ?? []); setLoading(false);
   }, [table]);
   useEffect(() => { load(); }, [load]);
+  useEffect(() => { if (edit) saveDraft(draftKey, edit); else clearDraft(draftKey); }, [edit, draftKey]);
 
   const refreshSite = () => qc.invalidateQueries({ queryKey: [table] });
 
@@ -87,6 +91,12 @@ export const CrudSection = ({ table, title, fields, labelKey, subKey, defaults, 
     return (
       <form onSubmit={save} className="space-y-4">
         <h3 className="text-lg font-semibold">{edit.id ? "Edit" : "Add"} · {title}</h3>
+        {restored && (
+          <p className="flex items-center justify-between gap-3 rounded-lg border border-pen/40 bg-accent px-3 py-2 text-sm">
+            <span>Restored your unsaved draft.</span>
+            <button type="button" onClick={() => setEdit(null)} className="underline underline-offset-4">Discard</button>
+          </p>
+        )}
         {parentKey && (
           <label className="block">
             <span className="mb-1 block text-sm font-medium">Part of <span className="ml-2 text-xs font-normal text-muted-foreground">{hasKids ? "this item contains others, so it stays at the top level" : "choose a parent to nest this item under it"}</span></span>

@@ -100,15 +100,19 @@ const Admin = () => {
     document.title = "Admin";
     const meta = document.createElement("meta"); meta.name = "robots"; meta.content = "noindex,nofollow"; document.head.appendChild(meta);
     supabase.auth.getSession().then(({ data }) => setSession(data.session));
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => setSession(s));
+    // Supabase re-announces the SAME session every time the tab regains focus. Ignore those,
+    // otherwise the page would remount and wipe whatever is being edited.
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) =>
+      setSession((prev) => (prev && s && prev.user.id === s.user.id ? prev : s)));
     return () => { sub.subscription.unsubscribe(); meta.remove(); };
   }, []);
 
+  const userId = session?.user.id; // re-check admin rights only when the signed-in user changes
   useEffect(() => {
     setIsAdmin(null);
-    if (!session) return;
+    if (!userId) return;
     supabase.from("admin_users").select("user_id").maybeSingle().then(({ data }) => setIsAdmin(!!data));
-  }, [session]);
+  }, [userId]);
 
   if (!isSupabaseConfigured) return <p className="p-10">Supabase is not configured (.env.local).</p>;
   if (session === undefined || (session && isAdmin === null)) return <Loader2 className="mx-auto mt-24 h-6 w-6 animate-spin" />;
