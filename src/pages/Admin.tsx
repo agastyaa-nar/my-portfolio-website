@@ -15,12 +15,12 @@ const sections = {
   profile: { label: "Profile", el: <ProfileForm /> },
   experience: {
     label: "Experience",
-    el: <CrudSection table="experiences" title="Experience" labelKey="title" subKey="organization"
+    el: <CrudSection table="experiences" title="Experience" labelKey="title" subKey="organization" parentKey="parent_id"
       defaults={{ icon: "briefcase", images: [] }}
       fields={[
         { key: "title", label: "Title", type: "text", required: true },
         { key: "organization", label: "Organization", type: "text", required: true },
-        { key: "period", label: "Period", type: "text", required: true, hint: "e.g. Jul 2025 - Aug 2025" },
+        { key: "period", label: "Period", type: "text", hint: "e.g. Jul 2025 - Aug 2025" },
         { key: "description", label: "Description", type: "textarea" },
         { key: "icon", label: "Fallback icon", type: "select", options: ICONS },
         { key: "logo_url", label: "Logo", type: "file", folder: "logos" },

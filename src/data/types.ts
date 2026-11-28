@@ -11,7 +11,7 @@ export type Settings = {
 };
 export type Experience = {
   id?: string; title: string; organization: string; period: string; description: string;
-  icon: string; logo_url: string | null; images: string[]; highlight: boolean; sort_order: number;
+  icon: string; logo_url: string | null; images: string[]; highlight: boolean; parent_id: string | null; sort_order: number;
 };
 export type Certification = {
   id?: string; name: string; issuer: string; year: string;
